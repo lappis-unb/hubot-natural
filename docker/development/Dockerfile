@@ -3,7 +3,7 @@ FROM node:alpine
 LABEL mantainer "Diego Dorgam <diego.dorgam@rocket.chat>"
 
 ENV HUBOT_LANG='en'                                                  \
-    HUBOT_CORPUS='corpus.yml'                                        \
+    HUBOT_CORPUS='training_data/corpus.yml'                                        \
     HUBOT_ADAPTER=rocketchat                                         \
     HUBOT_OWNER=RocketChat                                           \
     HUBOT_NAME=HubotNatural                                          \
@@ -20,7 +20,7 @@ ENV HUBOT_LANG='en'                                                  \
     LIVECHAT_DEPARTMENT_ID=null                                      \
     LISTEN_ON_ALL_PUBLIC=true
 
-RUN apk --update add --no-cache git && \
+RUN apk --update add --no-cache git make gcc g++ python python3 && \
     addgroup -S hubotnat && adduser -S -g hubotnat hubotnat
 
 USER node
@@ -37,6 +37,8 @@ WORKDIR /home/hubotnat/bot
 
 USER root
 
+ADD ./docker/development/bot_config.py /home/hubotnat/bot_config.py
+
 RUN mkdir -p /home/hubotnat/.config/configstore                             && \
     echo "optOut: true" > /home/hubotnat/.config/configstore/insight-yo.yml && \
     chown -R hubotnat:hubotnat /home/hubotnat
@@ -52,15 +54,12 @@ RUN yo hubot --adapter ${HUBOT_ADAPTER}         \
     /home/hubotnat/bot/scripts/example.coffee   \
     /home/hubotnat/bot/hubot-scripts.json
 
-
 COPY ["package.json", "/home/hubotnat/bot/"]
 
 ADD scripts/ /home/hubotnat/bot/scripts/
 
+RUN pip3 install requests --user
+
 ADD training_data/ /home/hubotnat/bot/training_data
 
-ENTRYPOINT /home/hubotnat/bot/bin/hubot -a rocketchat
-
-USER root
-RUN apk del git               && \
-    rm -rf /var/cache/apk/*
+ENTRYPOINT python3 /home/hubotnat/bot_config.py && /home/hubotnat/bot/bin/hubot -a rocketchat
