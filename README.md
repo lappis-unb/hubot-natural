@@ -127,11 +127,11 @@ docker-compose -f production.yml up -d rocketchat
 docker-compose -f production.yml up hubot-natural
 ```
 
-**In case of services are running in production mode, its necessary execute steps described at bot config documentation.**
+**In case of services are running in production mode, its necessary execute steps described at [bot config documentation](docs/CONFIG_BOT_EN.md)**
 
 For each mode there is a corresponding `Dockerfile` that builds a lightweight image based in Linux Alpine with all the repository content, so you can upload that image to a docker registry and deploy your chatbot from there if you want.
 
-*ATTENTION:* You must remember that hubot-natural must use login data of a real rocketchat user, in order to connect to rocketchat service. So by the first time you run this, you must first go into rocketchat and create a new user for hubot and then change the `ROCKETCHAT_USER` and `ROCKETCHAT_PASSWORD` variables in the docker-compose.yml file, according to the informations you used to create the user. After all its necessary reload the services using `docker-compose stop && docker-compose up` to start it all over again.
+*ATTENTION:* You must remember that hubot-natural must use login data of a real rocketchat user, in order to connect to rocketchat service. So by the first time you run this, you must first go into rocketchat and create a new user for hubot and then change the `ROCKETCHAT_USER` and `ROCKETCHAT_PASSWORD` variables in `production.yml` or `development.yml` file, according to the informations you used to create the user. After all its necessary reload the services using `docker-compose -f $env_yml stop && docker-compose -f $env_yml up`, where $env_yml must be `production.yml` or `development.yml` file, according to your needs.
 
 If you want to run only the hubot-natural service to connect an already running instance of Rocket.Chat, you just need to remember to set the `ROCKETCHAT_URL` to a correct value, like `https://open.rocket.chat`. And then run `docker-compose -f production.yml up hubot-natural` for production mode, or `docker-compose -f development.yml up hubot-natural` for development mode.
 
