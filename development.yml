@@ -12,6 +12,8 @@ services:
       - MONGO_URL=mongodb://mongo:27017/rocketchat
       - MONGO_OPLOG_URL=mongodb://mongo:27017/local
       - MAIL_URL=smtp://smtp.email
+      - ADMIN_USERNAME=admin
+      - ADMIN_PASS=admin
 #       - HTTP_PROXY=http://proxy.domain.com
 #       - HTTPS_PROXY=http://proxy.domain.com
     depends_on:
@@ -41,8 +43,9 @@ services:
       - mongo
 
   hubot-natural:
-    # image: diegodorgam/hubot-natural:latest
-    build: .
+    build: 
+      context: .
+      dockerfile: ./docker/development/Dockerfile
     restart: unless-stopped
     environment:
       - HUBOT_ADAPTER=rocketchat
@@ -63,6 +66,8 @@ services:
       - ROCKETCHAT_PASSWORD=botnatpass
       - HUBOT_NATURAL_DEBUG_MODE=true
       - LIVECHAT_DEPARTMENT_ID='<LIVECHAT_DEPARTMENT_ID>'
+      - ADMIN_USERNAME=admin
+      - ADMIN_PASS=admin
     volumes:
       - ./scripts:/home/hubotnat/bot/scripts
       - ./training_data:/home/hubotnat/bot/training_data
