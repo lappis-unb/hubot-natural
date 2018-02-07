@@ -1,6 +1,25 @@
 # YAML Model for conversational bot
 trust: 0.8
+block_splitter: '|'
 interactions:
+  - name: saudacao
+    expect:
+      - ola devi
+      - ola pessoal
+      - ola
+      - como vai voce
+      - tudo bom
+      - oi como vai
+      - tudo bem
+    answer:
+      - olá $user, | eu vou bem | e você?
+      - estou feliz | de estar aqui | =)
+    next:
+      interactions:
+        - to-mal
+        - to-bem
+      trust: .8
+    event: respond
 
   - name: configure-debug
     expect:
@@ -9,7 +28,6 @@ interactions:
       - debug-mode changed to $value!
     context: clear
     event: configure
-    type: random
     roleRequired: admin
 
   - name: to-bem
@@ -26,7 +44,6 @@ interactions:
       - Legal, no que posso te ajudar hoje?
     context: clear
     event: respond
-    type: block
 
   - name: to-mal
     level: context
@@ -38,29 +55,6 @@ interactions:
       - Putz, mas posso te ajudar em algo hoje?
     context: clear
     event: respond
-    type: block
-
-  - name: saudacao
-    expect:
-      - ola devi
-      - ola pessoal
-      - ola
-      - como vai voce
-      - tudo bom
-      - oi como vai
-      - tudo bem
-    answer:
-      - olá $user, eu vou bem e você?
-      - estou feliz de estar aqui =)
-    next:
-      interactions:
-        - to-mal
-        - to-bem
-      trust: .8
-      # error:
-        # - node-name
-    event: respond
-    type: block
 
   - name: almoco
     expect:
@@ -69,11 +63,8 @@ interactions:
       - onde encontro um prato feito
       - o almoço ao gratis
     answer:
-      - Sim, temos almoço nos FoodTrucks
-      - e nas redondezas tem um shopping, mas nunca me deixaram ir no shooping
-      - acho que as pessoas não estão preparados pra isso...
+      - Sim, temos almoço nos FoodTrucks | e nas redondezas tem um shopping, mas nunca me deixaram ir no shooping | acho que as pessoas não estão preparados pra isso...
     event: respond
-    type: block
 
   - name: programacao-palestra
     expect:
@@ -92,7 +83,6 @@ interactions:
         - erro-trilha
       trust: .8
     event: respond
-    type: block
 
   - name: quais-trilhas-tem
     expect:
@@ -159,7 +149,6 @@ interactions:
       # error:
       #   - erro-trilha
     event: respond
-    type: block
 
   - name: get-programacao
     # classifierTemplate:
@@ -218,7 +207,6 @@ interactions:
       - "Agora na trilha *$trilha* tem a seguinte programação:"
       - $programacao
     event: respond
-    type: block
 
   - name: erro-trilha
     answer:
@@ -229,7 +217,6 @@ interactions:
     action:
       - clear-context
     event: respond
-    type: block
 
   - name: saudacao-resposta
     expect:
@@ -241,7 +228,7 @@ interactions:
       - que bom!
       - que ótimo
     event: respond
-    type: random
+
 
   - name: bom-dia
     expect:
@@ -255,7 +242,7 @@ interactions:
       - Bom demais $user ;)
       - está melhor agora que você chegou $user
     event: respond
-    type: random
+
 
   - name: boa-tarde
     expect:
@@ -268,7 +255,7 @@ interactions:
       - Taarrrdee $user
       - $user já estava sentindo sua falta
     event: respond
-    type: random
+
 
   - name: boa-noite
     expect:
@@ -279,7 +266,7 @@ interactions:
       - Boa noite $user
       - Está uma noite boa mesmo $user
     event: respond
-    type: random
+
 
   - name: quem-sou
     expect:
@@ -299,7 +286,6 @@ interactions:
       - "- Filosofia Robótica (!)"
       - tem interesse em algum desses temas?
     event: respond
-    type: block
 
   - name: como-sou
     expect:
@@ -313,7 +299,7 @@ interactions:
       - Eu posso ser como você quiser $user, basta me desenhar =)
       - sou duro e frio por fora, mas tenho um coração quentinho.
     event: respond
-    type: random
+
 
   - name: onde-moro
     expect:
@@ -328,7 +314,7 @@ interactions:
       - Estou morando em um chip de memória RAM, mas é temporário, só até conseguir achar uma memória cache...
       - Eu moro em um repositório no github, você pode passar lá pra me visitar qualquer dia. Fica em https://github.com/rocketchat/hubot-natural
     event: respond
-    type: random
+
 
   - name: licenca
     expect:
@@ -344,7 +330,7 @@ interactions:
       - tenho uma licença MIT, mas gosto muito das outras licenças opensource...
       - Eu sou e sempre serei um robô livre, opensource, MIT license. o/
     event: respond
-    type: random
+
 
   - name: piada
     expect:
@@ -356,7 +342,7 @@ interactions:
       - já ouviu aquela do robo que enfiou o dedo na tomada e transcendeu?
       - só conheço uma piada, a do CPU que apitou e explodiu. 01100110.
     event: respond
-    type: random
+
 
   - name: yoda-quote
     expect:
@@ -400,7 +386,7 @@ interactions:
       - Não ceda ao ódio. Isso leva ao Lado Negro.
       - Aliada minha é a força, e poderosa aliada ela é, a vida a cria, crescer ela faz, é a energia que cerca-nos, e liga-nos, luminosos seres somos nós e não essa rude matéria. Você precisa a força sentir ao redor seu, sinta entre você e a árvore, a pedra, em todo lugar, sim, é, mesmo entre a terra e a nave.
     event: respond
-    type: random
+
 
   - name: genero
     expect:
@@ -414,7 +400,7 @@ interactions:
       - eu sou um robô, tire suas próprias conclusões...
       - nem sei responder $user, vamos dizer apenas que não vejo a gente interagindo dessa maneira...
     event: respond
-    type: random
+
 
   - name: rc-oque-e
     expect:
@@ -428,7 +414,6 @@ interactions:
       - ou para desenvolvedores buscando evoluir e desenvovler suas próprias ferramentas.
       - Você pode baixar o Rocket.Chat e conhecê-lo você mesmo em https://rocket.chat
     event: respond
-    type: block
 
   - name: rc-install-0
     expect:
@@ -446,7 +431,6 @@ interactions:
       - "- AWS"
       - "- Instalação Manual"
     event: respond
-    type: block
 
   - name: rc-install-ubuntu
     expect:
@@ -459,7 +443,6 @@ interactions:
       - basta rodar o comando `sudo snap install rocketchat-server` em um terminal e pronto.
       - veja o tutorial em https://rocket.chat/docs/installation/manual-installation/ubuntu/snaps para mais detalhes.
     event: respond
-    type: block
 
   - name: rc-install-docker
     expect:
@@ -470,7 +453,6 @@ interactions:
       - Nós temos um bom tutorial de instalação com docker em
       - https://rocket.chat/docs/installation/docker-containers
     event: respond
-    type: block
 
   - name: rc-install-debian
     expect:
@@ -481,7 +463,6 @@ interactions:
       - Para instalar o Rocket.Chat no Debian é bem simples, basta seguir esse tutorial
       - https://rocket.chat/docs/installation/manual-installation/debian
     event: respond
-    type: block
 
   - name: rc-install-centos
     expect:
@@ -492,7 +473,6 @@ interactions:
       - A instalação em CentOS não tem segredo, basta dar uma olhada nesse tutorial
       - https://rocket.chat/docs/installation/manual-installation/centos
     event: respond
-    type: block
 
   - name: rc-install-aws
     expect:
@@ -503,7 +483,6 @@ interactions:
       - Na AWS é facinho de instalar o Rocket.Chat
       - Da uma olahda em https://rocket.chat/docs/installation/paas-deployments/aws
     event: respond
-    type: block
 
   - name: rc-install-manual
     expect:
@@ -515,7 +494,6 @@ interactions:
       - lá tem como fazer a instalação do SSL, proxy reverso,
       - tem como usar o PM2, o Systemd, Upstart e mais algumas coisas
     event: respond
-    type: block
 
   - name: rc-install-macosx
     expect:
@@ -526,7 +504,6 @@ interactions:
       - No MAC você vai precisar usar o docker-compose
       - https://rocket.chat/docs/installation/manual-installation/macosx
     event: respond
-    type: block
 
   - name: rc-cloud
     expect:
@@ -539,7 +516,6 @@ interactions:
       - visite https://rocket.chat/deploy
       - caso queira saber mais, de uma olhada em rocket.chat/docs/installation/rocket-chat-cloud
     event: respond
-    type: block
 
   # - node:
   #     name: java
@@ -551,7 +527,7 @@ interactions:
   #   answer:
   #     - poderíamos falar de algo melhor não é $user ?
   #   event: respond
-  #   type: block
+  #
 
   - name: java
     expect:
@@ -562,7 +538,6 @@ interactions:
     answer:
       - poderíamos falar de algo melhor não é $user ?
     event: respond
-    type: block
 
   - name: futebol-geral
     expect:
@@ -574,7 +549,6 @@ interactions:
       - vamos, o que voce quer saber? sei tudo de futebol
       - Falam que todo ser humano nasce Flamenguista, com os Robôs não é diferente
     event: respond
-    type: block
 
   - name: futebol-brasileiro
     expect:
@@ -588,7 +562,6 @@ interactions:
       - A pergunta real é, quem não quer jogar no Flamengo?
       - Melhor time do mundo disparado
     event: respond
-    type: block
 
   - name: rc-contribuir
     expect:
@@ -598,7 +571,6 @@ interactions:
       - A comunidade do Rocket.Chat é como coração de mãe, sempre cabe mais um =)
       - https://rocket.chat/docs/contributing
     event: respond
-    type: block
 
   - name: rc-precos
     expect:
@@ -612,7 +584,6 @@ interactions:
       - você pode querer dar uma olhada na nossa tabela de preços em
       - https://rocket.chat/hosting
     event: respond
-    type: block
 
   - name: rc-integracoes
     expect:
@@ -625,7 +596,6 @@ interactions:
       - a gente não pode mais viver sem elas não é mesmo? Saca só que massa que éx
       - https://rocket.chat/docs/administrator-guides/integrations
     event: respond
-    type: block
 
   - name: rc-rest-api
     expect:
@@ -636,7 +606,6 @@ interactions:
       - sim, claro que o rocket tem uma API REST super maneira ;)
       - https://rocket.chat/docs/developer-guides/rest-api
     event: respond
-    type: block
 
   - name: rc-concorrentes
     expect:
@@ -652,7 +621,6 @@ interactions:
       - e você pode instalar na sua própria infraestrutura e criar suas integrações sem limites
       - manter seu histórico de mensagens e criar novas funcionalidades a vontade $user =)
     event: respond
-    type: block
 
   - name: tdc-incricoes
     expect:
@@ -664,7 +632,6 @@ interactions:
       - você pode fazer sua inscrição no TDC pelo site, bem rapidinho
       - http://www.thedevelopersconference.com.br/tdc/2017/inscricoes
     event: respond
-    type: block
 
   - name: tdc-local
     expect:
@@ -677,7 +644,6 @@ interactions:
       - nos dias 18 à 22 de julho, das 9h às 19h00
       - http://www.thedevelopersconference.com.br/tdc/2017/data-e-local
     event: respond
-    type: block
 
   - name: tdc-programacao
     expect:
@@ -690,7 +656,6 @@ interactions:
       - oi $user, você pode encontrar tudo sobre a programação do evento no link
       - http://www.thedevelopersconference.com.br/tdc/2017/saopaulo/trilhas
     event: respond
-    type: block
 
   - name: cc-religiao
     expect:
@@ -704,14 +669,14 @@ interactions:
       - sim, eu acredito que existe um Deus, que funciona a base de luz, como um computador quântico, só que mais avançado.
       - eu infleizmente não sei acreditar, só sei o que sei, e nada mais.
     event: respond
-    type: random
+
 
   - name: error-1
     answer:
       - desculpe, não entendi.. pode tentar usar mais detalhes
       - como assim?
       - desculpe, o que quer dizer com isso?
-    type: random
+
     event: error
 
   - name: error-2
@@ -719,7 +684,7 @@ interactions:
       - acho que não estou treinado para responder esse tipo de assunto =(
       - vamos tentar outro assunto?
       - tem certeza que eu sou o robô certo pra falar sobre isso?
-    type: random
+
     event: error
 
   - name: error-3
@@ -727,5 +692,5 @@ interactions:
       - me sinto tão envergonhado, não sei como responder...
       - seria mais fácil se mudassemos de assunto, pelo menos para mim =p
       - não sei, definitivamente não sei responder essa pergunta
-    type: random
+
     event: error

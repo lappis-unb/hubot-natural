@@ -20,6 +20,16 @@ common.stringElseRandomKey = (variable) ->
   if variable instanceof Array
     variable[Math.floor(Math.random() * variable.length)]
 
+common.getMessage = (interaction, msg) ->
+  block_splitter = global.config.block_splitter
+  if typeof block_splitter isnt 'string'
+    block_splitter = '|'
+
+  messages = interaction.answer.map (line) ->
+    return (common.msgVariables line, msg).split(block_splitter)
+
+  return messages[Math.floor(Math.random() * messages.length)]
+
 getYAMLFiles = (filepath) ->
   listFile = fs.readdirSync filepath
   dataFiles = []
@@ -46,20 +56,20 @@ common.regexEscape = (string) ->
   string.replace /[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, "\\$&"
 
 common.getConfigFilePath = () ->
-    return process.env.HUBOT_CORPUS || 'training_data/corpus.yml'
+  return process.env.HUBOT_CORPUS || 'training_data/corpus.yml'
 
 common.loadConfigfile = (filepath) ->
-    try
-      console.log("Loading corpus: " + filepath)
-      if fs.lstatSync(filepath).isFile()
-        return yaml.safeLoad fs.readFileSync filepath, 'utf8'
-      else if fs.lstatSync(filepath).isDirectory()
-        yamlFiles = getYAMLFiles(filepath)
-        return concatYAMLFiles(yamlFiles)
-    catch err
-      console.error "An error occurred while trying to load bot's config."
-      console.error err
-      errorMessage = "Error on loading YAML file " + filepath
-      throw errorMessage
+  try
+    console.log("Loading corpus: " + filepath)
+    if fs.lstatSync(filepath).isFile()
+      return yaml.safeLoad fs.readFileSync filepath, 'utf8'
+    else if fs.lstatSync(filepath).isDirectory()
+      yamlFiles = getYAMLFiles(filepath)
+      return concatYAMLFiles(yamlFiles)
+  catch err
+    console.error "An error occurred while trying to load bot's config."
+    console.error err
+    errorMessage = "Error on loading YAML file " + filepath
+    throw errorMessage
 
 module.exports = common

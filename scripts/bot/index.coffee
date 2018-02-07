@@ -246,6 +246,7 @@ module.exports = (_config, robot) ->
     msg = res.match[0].replace res.robot.name + ' ', ''
     msg = msg.replace(/^\s+/, '')
     msg = msg.replace(/\s+&/, '')
+
     # check if robot should respond
     if res.envelope.user.roomType in ['c', 'p']
       if (res.message.text.match new RegExp('\\b' + res.robot.name + '\\b', 'i')) or (res.message.text.match new RegExp('\\b' + res.robot.alias + '\\b', 'i'))
