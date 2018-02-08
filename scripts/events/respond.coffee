@@ -5,7 +5,7 @@ natural = require 'natural'
 answers = {}
 livechat_department = (process.env.LIVECHAT_DEPARTMENT_ID || null )
 
-class respond
+class Respond
   constructor: (@interaction) ->
   process: (msg) =>
     lc_dept = @interaction.department or livechat_department
@@ -31,4 +31,4 @@ class respond
                     msg.sendWithNaturalDelay getMessage(offline_message, msg)
               ), delay)
 
-module.exports = respond
+module.exports = Respond

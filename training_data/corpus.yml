@@ -1,6 +1,5 @@
 # YAML Model for conversational bot
 trust: 0.8
-block_splitter: '|'
 interactions:
   - name: saudacao
     expect:
@@ -12,8 +11,7 @@ interactions:
       - oi como vai
       - tudo bem
     answer:
-      - olá $user, | eu vou bem | e você?
-      - estou feliz | de estar aqui | =)
+      - olá $user, eu vou bem e você? estou feliz de estar aqui =)
     next:
       interactions:
         - to-mal
@@ -63,7 +61,10 @@ interactions:
       - onde encontro um prato feito
       - o almoço ao gratis
     answer:
-      - Sim, temos almoço nos FoodTrucks | e nas redondezas tem um shopping, mas nunca me deixaram ir no shooping | acho que as pessoas não estão preparados pra isso...
+      - >
+        Sim, temos almoço nos FoodTrucks |
+        e nas redondezas tem um shopping, mas nunca me deixaram ir no shooping |
+        acho que as pessoas não estão preparados pra isso...
     event: respond
 
   - name: programacao-palestra
@@ -91,9 +92,7 @@ interactions:
       - quais trilhas
       - qual é a minha trilha
     answer:
-      - "Eu conheço a programação dessas trilhas. Basta perguntar assim:"
-      - "`quero saber a programação da trilha ...`"
-      - "e me passar o nome de uma dessas trilhas:"
+      - "Eu conheço a programação dessas trilhas. Basta perguntar assim:| `quero saber a programação da trilha ...` | e me passar o nome de uma dessas trilhas: |"
       - |
         TRANSFORMAÇÃO DIGITAL
         DESIGN THINKING
@@ -204,8 +203,7 @@ interactions:
       - 'TESTES II'
       - 'MANAGEMENT 3.0 II'
     answer:
-      - "Agora na trilha *$trilha* tem a seguinte programação:"
-      - $programacao
+      - "Agora na trilha *$trilha* tem a seguinte programação: | $programacao"
     event: respond
 
   - name: erro-trilha
@@ -229,7 +227,6 @@ interactions:
       - que ótimo
     event: respond
 
-
   - name: bom-dia
     expect:
       - bom dia
@@ -243,7 +240,6 @@ interactions:
       - está melhor agora que você chegou $user
     event: respond
 
-
   - name: boa-tarde
     expect:
       - boa tarde
@@ -256,7 +252,6 @@ interactions:
       - $user já estava sentindo sua falta
     event: respond
 
-
   - name: boa-noite
     expect:
       - boa noite
@@ -266,7 +261,6 @@ interactions:
       - Boa noite $user
       - Está uma noite boa mesmo $user
     event: respond
-
 
   - name: quem-sou
     expect:
@@ -278,13 +272,9 @@ interactions:
       - como voce funciona
       - help
     answer:
-      - Bem, eu sou um chatbot experimental, não sei fazer muita coisa ainda
-      - mas tenho muita vontade de aprender.
-      - Eu sei falar sobre alguns assuntos como
-      - "- o TDC de Floripa"
-      - "- Rocket.Chat"
-      - "- Filosofia Robótica (!)"
-      - tem interesse em algum desses temas?
+      - >
+       Bem, eu sou um chatbot experimental, não sei fazer muita coisa ainda | mas tenho muita vontade de aprender.
+       Eu sei falar sobre alguns assuntos como | "- o TDC de Floripa" | "- Rocket.Chat" | "- Filosofia Robótica (!)" | tem interesse em algum desses temas?
     event: respond
 
   - name: como-sou

@@ -45,39 +45,49 @@ interactions:
       - Hello there $user, how are you?
       - Glad to be here...
     event: respond
-    type: block
 ```
 
 What this syntax means:
 
-- `trust`: the minimum level of certain that must be returned by the classifier in order to run this interaction. Value is 0 to 1 (0% to 100%). If a classifier returns a value of certainty minor than `trust`, the bots responds with and error interaction node.  
+- `trust`: the minimum level of certain that must be returned by the classifier in order to run this interaction. Value is 0 to 1 (0% to 100%). If a classifier returns a value of certainty minor than `trust`, the bots responds with and error interaction node.
 - `interactions`: An vector with lots of interaction nodes that will be parsed. Every interaction designed to your chatbot must be under an interaction.node object structure.
 - `name`: that's the unique name of the interaction by which it will be identified. Do not create more than one interaction with the same `node.name` attribute.  
 - `expect`: Those are the sentences that will be given to the bots training. They can be strings or keywords vectors, like `['consume','use']`.   
 - `answer`: the messages that will be sent to the user, if the classifiers get classified above the trust level. The `node.message` will be parsed and sent by event class. You can specify variables in message. By default HubotNatural comes with `$user`, `$bot` and `$room` variables.  
 - `event`: is the name of the CoffeeScript or JavaScript Class inside `scripts/events`, without the file extension.  
-- `type`: This is an example of an event attribute. The type attribute is interpreted by respond.coffee class, and basically defines if all lines in message should be send as a `block` or if the bot should randomly send only one of the lines defined.
 
 ### Event Coffee Classes
 
 Event classes can be written to extend the chatbot skills. They receives the interaction object and parse the message, like this:  
 
 ```yaml
-class respond
+class Respond
   constructor: (@interaction) ->
   process: (msg) =>
-    type = @interaction.type?.toLowerCase() or 'random'
-    switch type
-      when 'block'
-        @interaction.answer.forEach (line) ->
-          message = msgVariables line, msg
-          msg['send'] message
-      when 'random'
-        message = stringElseRandomKey @interaction.answer
-        message = msgVariables message, msg
-        msg['send'] message
+    lc_dept = @interaction.department or livechat_department
+    no_online_agents_msg = 'Sorry, there is no online agents to transfer to.'
+    offline_message = @interaction.offline or no_online_agents_msg
 
-module.exports = respond
+    msg.sendWithNaturalDelay getMessage(@interaction, msg)
+
+    action = @interaction.action?.toLowerCase() or false
+    switch action
+      when 'transfer'
+        @livechatTransfer(msg, 3000, lc_dept, offline_message, type)
+
+  livechatTransfer: (msg, delay = 3000, lc_dept, offline_message, type) ->
+    setTimeout((-> msg.robot.adapter.callMethod('livechat:transfer',
+                  roomId: msg.envelope.room
+                  departmentId: lc_dept
+                ).then (result) ->
+                  if result == true
+                    console.log 'livechatTransfer executed!'
+                  else
+                    console.log 'livechatTransfer NOT executed!'
+                    msg.sendWithNaturalDelay getMessage(offline_message, msg)
+              ), delay)
+
+module.exports = Respond
 ```
 
 It's base constructor is the `@interaction` node so you can have access to all attributes inside an interaction just using `@interaction.attribute`. Here you can parse texts, call APIs, read files, access databases, and everything else you need.

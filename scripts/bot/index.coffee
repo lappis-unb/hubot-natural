@@ -5,11 +5,11 @@ natural = require 'natural'
 lang = (process.env.HUBOT_LANG || 'en')
 
 if lang == "en"
-  PorterStemmer = require path.join '..', '..', 'node_modules', 'natural', 'lib',
-   'natural', 'stemmers', 'porter_stemmer.js'
+  PorterStemmer = require path.join('..', '..', 'node_modules',
+    'natural', 'lib', 'natural', 'stemmers', 'porter_stemmer.js')
 else
-  PorterStemmer = require path.join '..', '..', 'node_modules', 'natural', 'lib',
-    'natural', 'stemmers', 'porter_stemmer_' + lang + '.js'
+  PorterStemmer = require path.join('..', '..', 'node_modules',
+    'natural', 'lib', 'natural', 'stemmers', 'porter_stemmer_' + lang + '.js')
 
 debug_mode = ((process.env.HUBOT_NATURAL_DEBUG_MODE == 'true') || false)
 
@@ -73,7 +73,8 @@ classifyInteraction = (interaction, classifier) ->
         classifier.addDocument(doc, interaction.name)
 
     if Array.isArray interaction.next?.interactions
-      interaction.next.classifier = new natural.LogisticRegressionClassifier(PorterStemmer)
+      interaction.next.classifier = new natural.LogisticRegressionClassifier(
+        PorterStemmer)
       for nextInteractionName in interaction.next.interactions
         nextInteraction = global.config.interactions.find (n) ->
           return n.name is nextInteractionName
@@ -84,7 +85,8 @@ classifyInteraction = (interaction, classifier) ->
       interaction.next.classifier.train()
 
     if interaction.multi == true
-      interaction.classifier = new natural.LogisticRegressionClassifier(PorterStemmer)
+      interaction.classifier = new natural.LogisticRegressionClassifier(
+        PorterStemmer)
       for doc in interaction.expect
         interaction.classifier.addDocument(doc, doc)
       interaction.classifier.train()
@@ -104,7 +106,9 @@ isDebugMode = (res) ->
 
 getDebugCount = (res) ->
   key = 'configure_debug-count_' + res.envelope.room
-  return if res.robot.brain.get(key) then res.robot.brain.get(key) - 1 else false
+  return (
+    if res.robot.brain.get(key) then res.robot.brain.get(key) - 1 else false
+  )
 
 buildClassificationDebugMsg = (res, classifications) ->
   list = ''
@@ -114,7 +118,8 @@ buildClassificationDebugMsg = (res, classifications) ->
     classifications = classifications[0..debugCount]
 
   for classification, i in classifications
-    list = list.concat 'Label: ' + classification.label + ' Score: ' + classification.value + '\n'
+    list = list.concat('Label: ' + classification.label +
+      ' Score: ' + classification.value + '\n')
 
   newMsg = {
     channel: res.envelope.user.roomID,
@@ -139,6 +144,9 @@ clearErrors = (res) ->
   key = 'errors_' + res.envelope.room + '_' + res.envelope.user.id
   res.robot.brain.set(key, 0)
 
+createMatch = (res, text) ->
+  return res.message.text.match new RegExp('\\b' + text + '\\b', 'i')
+
 module.exports = (_config, robot) ->
   global.config = _config
 
@@ -158,7 +166,8 @@ module.exports = (_config, robot) ->
     console.time 'Processing interactions (Done)'
 
     global.nodes = {}
-    global.classifier = new natural.LogisticRegressionClassifier(PorterStemmer)
+    global.classifier = new natural.LogisticRegressionClassifier(
+      PorterStemmer)
 
     for interaction in global.config.interactions
       { name, event } = interaction
@@ -187,7 +196,8 @@ module.exports = (_config, robot) ->
     console.log 'context ->', context
 
     if context
-      interaction = global.config.interactions.find (interaction) -> interaction.name is context
+      interaction = global.config.interactions.find (interaction) ->
+        interaction.name is context
       if interaction? and interaction.next?.classifier?
         currentClassifier = interaction.next.classifier
 
@@ -244,12 +254,11 @@ module.exports = (_config, robot) ->
   robot.hear /(.+)/i, (res) ->
     res.sendWithNaturalDelay = sendWithNaturalDelay.bind(res)
     msg = res.match[0].replace res.robot.name + ' ', ''
-    msg = msg.replace(/^\s+/, '')
-    msg = msg.replace(/\s+&/, '')
+    msg = msg.trim()
 
     # check if robot should respond
     if res.envelope.user.roomType in ['c', 'p']
-      if (res.message.text.match new RegExp('\\b' + res.robot.name + '\\b', 'i')) or (res.message.text.match new RegExp('\\b' + res.robot.alias + '\\b', 'i'))
+      if (createMatch(res.robot.name) or createMatch(res.robot.alias))
         processMessage res, msg
         # TODO: Add engaged user conversation recognition/tracking
     else if res.envelope.user.roomType in ['d', 'l']
